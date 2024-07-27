@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import './loginpage.css';
+import backgroundimg from '/bg.jpg'; 
 import Cookies from 'js-cookie';
 
 
@@ -68,7 +69,20 @@ const App: React.FC = () => {
 
   const handleRegister = async (event: React.FormEvent) => {
     event.preventDefault();
+    
+    if (keeper.length < 5 || keeper.length > 100){
+		console.error('Keeper Length');
+        setMessageColor('red');
+        setMessage("Invalid Username Length");
+        return;		
+	}
 
+	if (password.length < 5 || password.length > 100){
+		console.error('Password Length');
+        setMessageColor('red');
+        setMessage("Invalid Password Length");
+        return;		
+	}
     
     if (password !== confirmPassword) {
 	  setMessageColor('red');
@@ -107,6 +121,7 @@ const App: React.FC = () => {
 
    return (
 	    <div>
+	      <img src={backgroundimg} className="BackgroundImage"/>
 	      <h1 id="page-title">Byrne Banking Solutions</h1>
 	      <form onSubmit={isRegistering ? handleRegister : handleLogin}>
 	        <div>
