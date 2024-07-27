@@ -6,6 +6,9 @@ import Cookies from 'js-cookie';
 const App: React.FC = () => {
   const [keeper, setKeeper] = useState<string>('');
   const [password, setPassword] = useState<string>('');
+  const [message, setMessage] = useState<string>('');
+   const [messageColor, setMessageColor] = useState<string>('');
+
 
   const handleLogin = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -25,14 +28,21 @@ const App: React.FC = () => {
           secure: false, // Use `true` if you're in production
           sameSite: 'Strict', // or 'Lax' based on your needs
         });
-
+        setMessageColor('green');
         console.log('Login successful:');
+        setMessage('Log in successful!');
       } else {
+		const errorData= await response.json();
+		const errorMessage = errorData.message;
         // Handle login error
         console.error('Login failed');
+        setMessageColor('red');
+        setMessage(errorMessage);
       }
     } catch (error) {
       console.error('An error occurred:', error);
+       setMessageColor('red');
+       setMessage('Error! ' + error);
     }
   };
 
@@ -91,6 +101,7 @@ const App: React.FC = () => {
           </button>
         </div>
       </form>
+      <p id="status-text" style={{ color: messageColor }}>{message}</p>
       <p id="foot-note">Because Your Money Matters</p>
     </div>
     
