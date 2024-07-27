@@ -1,7 +1,7 @@
 html {
     margin: 0;
     display: flex;
-    align-items: center;
+    align-items: centre;
     justify-content: center;
     font-family: Arial, sans-serif;
     background-color: #f0f0f0; 
@@ -14,12 +14,40 @@ html {
     margin: 0;
 }
 
+#logo {
+	position: absolute; 
+    width: 150px;
+    height: auto;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
 
 #page-title {
+    position: absolute; 
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    margin: 0;
     text-align: center;
-    height: 50%;
-    padding: 20px;
+    width: 100%;
+    color: white;
+    padding: 10px 0;
 }
+
+#foot-note {
+    position: absolute; 
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    margin: 0;
+    text-align: center;
+    width: 100%;
+    color: white;
+    padding: 10px 0;
+}
+
+
 
 #error-text {
     text-align: center;
@@ -30,10 +58,13 @@ html {
 }
 
 form {
-    background-color: #fff; 
-    padding: 20px;
+	align-items: center;
+    justify-content: center;
+    background-color: grey; 
+    padding: 15px;
     border-radius: 10px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); 
+    width: 300px;
 }
 
 div {
@@ -48,7 +79,7 @@ label {
 
 input {
     width: 100%;
-    padding: 8px;
+    padding: 15px;
     box-sizing: border-box;
 }
 
@@ -62,10 +93,26 @@ button {
     background-color: black;
     color: white;
     border: solid white;
-    border-radius: 5px;
+    border-radius: 1px;
     cursor: pointer;
+    margin-bottom: 10px;
 }
 
 button:hover {
     background-color: green;
+}
+
+.Registerbutton {
+    width: 100%;
+    padding: 10px;
+    background-color: black;
+    color: white;
+    border: solid white;
+    border-radius: 1px;
+    cursor: pointer;
+    margin-bottom: 10px;
+}
+
+.Registerbutton:hover {
+    background-color: blue;
 }
