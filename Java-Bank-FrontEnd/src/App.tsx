@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import './loginpage.css';
 import backgroundimg from '/bg.jpg'; 
 import Cookies from 'js-cookie';
@@ -11,20 +11,45 @@ const App: React.FC = () => {
   const [messageColor, setMessageColor] = useState<string>('');
   const [showConfirmPassword, setShowConfirmPassword] = useState<boolean>(false);
   const [isRegistering, setIsRegistering] = useState<boolean>(false);
+  
+  
+ useEffect(() => {
+    const token = Cookies.get('jwt');
+    if (token) {
+      autoLogin();
+    }
+  }, []);
+  
+  const autoLogin = async () => {
+  const getRequestResponse = await fetch('https://82.41.19.127:8080/api/accs/1', {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${Cookies.get('jwt')}`,
+        },
+      });
+      if (getRequestResponse.ok) {
+        const getData = await getRequestResponse.json();
+        console.log('GET request data:', getData);
+      } else {
+        console.error('GET request failed:', getRequestResponse.statusText);
+      }
+  }; 
+
 
   const handleLogin = async (event: React.FormEvent) => {
     event.preventDefault();
     try {
-      const response = await fetch('https://localhost:8080/auth/login', {
+      const response = await fetch('https://82.41.19.127:8080/auth/login', {
         method: 'POST',
+        credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ keeper, password }),
       });
       if (response.ok) {
-        const jsonResponse = await response.json();
-        Cookies.set('jwt', jsonResponse.message, { 
+        const token = await response.json();
+        Cookies.set('jwt', token.message, { 
           expires: 1,
           path: '/',
           secure: true, // Use `true` in production
@@ -32,12 +57,8 @@ const App: React.FC = () => {
         });
         setMessageColor('green');
         setMessage('Log in Successful!');
-      } else {
-        const errorData = await response.json();
-        const errorMessage = errorData.message;
-        setMessageColor('red');
-        setMessage(errorMessage);
-      }
+        autoLogin();
+    }
     } catch (error) {
       console.error('An error occurred:', error);
       setMessageColor('red');
@@ -81,7 +102,7 @@ const App: React.FC = () => {
     }   
     
     try {
-      const response = await fetch('https://localhost:8080/auth/register', {
+      const response = await fetch('https://82.41.19.127:8080/auth/register', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
