@@ -59,6 +59,12 @@ const App: React.FC = () => {
         setMessage('Log in Successful!');
         autoLogin();
     }
+    else {
+        const errorData = await response.json();
+        const errorMessage = errorData.message;
+        setMessageColor('red');
+        setMessage(errorMessage)
+	}
     } catch (error) {
       console.error('An error occurred:', error);
       setMessageColor('red');
