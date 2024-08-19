@@ -1,4 +1,5 @@
 {
+  "proxy": "https://82.41.19.127:8080",
   "name": "front-end",
   "private": true,
   "version": "0.0.0",
