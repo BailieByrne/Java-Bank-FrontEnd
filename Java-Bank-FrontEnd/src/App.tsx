@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import './loginpage.css';
 import backgroundimg from '/bg.jpg'; 
 import Cookies from 'js-cookie';
+import Home from './home'; 
 
 const App: React.FC = () => {
   const [keeper, setKeeper] = useState<string>('');
@@ -12,7 +13,7 @@ const App: React.FC = () => {
   const [showConfirmPassword, setShowConfirmPassword] = useState<boolean>(false);
   const [isRegistering, setIsRegistering] = useState<boolean>(false);
 
-  
+
   
  useEffect(() => {
     const token = Cookies.get('jwt');
@@ -35,8 +36,8 @@ const App: React.FC = () => {
         console.error('GET request failed:', getRequestResponse.statusText);
       }
   }; 
-
-
+  
+  
   const handleLogin = async (event: React.FormEvent) => {
     event.preventDefault();
     try {
