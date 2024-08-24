@@ -1,9 +1,4 @@
-{
-  "proxy": "https://82.41.19.127:8080",
-  "name": "front-end",
-  "private": true,
-  "version": "0.0.0",
-  "type": "module",
+ {
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",

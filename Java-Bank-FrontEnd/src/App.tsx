@@ -11,7 +11,7 @@ const App: React.FC = () => {
   const [messageColor, setMessageColor] = useState<string>('');
   const [showConfirmPassword, setShowConfirmPassword] = useState<boolean>(false);
   const [isRegistering, setIsRegistering] = useState<boolean>(false);
-  const apiUrl = import.meta.env.VITE_API_URL;
+
   
   
  useEffect(() => {
@@ -22,7 +22,7 @@ const App: React.FC = () => {
   }, []);
   
   const autoLogin = async () => {
-  const getRequestResponse = await fetch(apiUrl+ '/api/accs/1', {
+  const getRequestResponse = await fetch('https://82.41.19.127:8080/api/accs/1', {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${Cookies.get('jwt')}`,
@@ -40,7 +40,7 @@ const App: React.FC = () => {
   const handleLogin = async (event: React.FormEvent) => {
     event.preventDefault();
     try {
-      const response = await fetch(apiUrl+'/auth/login', {
+      const response = await fetch('https://82.41.19.127:8080/auth/login', {
         method: 'POST',
         credentials: 'include',
         headers: {
@@ -109,7 +109,7 @@ const App: React.FC = () => {
     }   
     
     try {
-      const response = await fetch(apiUrl + '/auth/register', {
+      const response = await fetch('https://82.41.19.127:8080/auth/register', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
