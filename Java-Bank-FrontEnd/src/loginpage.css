@@ -38,8 +38,8 @@ html {
 
 #page-title {
 	font-size: 40px;
-	font-family: Georgia;
-	font-style: italic;
+	font-family: space;
+	font-style: normal;
     position: absolute; 
     top: 0;
     left: 50%;
@@ -47,7 +47,7 @@ html {
     margin: 0;
     text-align: center;
     width: 100%;
-    color: white;
+    color: rgb(103, 134, 139);
     padding: 10px 0;
 }
 
@@ -134,4 +134,11 @@ button:hover {
 
 .Registerbutton:hover {
     background-color: blue;
+}
+
+@font-face {
+  font-family: "space";
+  font-style: normal;
+  font-weight: normal;
+  src: url("./fonts/space.ttf") format("truetype");
 }
