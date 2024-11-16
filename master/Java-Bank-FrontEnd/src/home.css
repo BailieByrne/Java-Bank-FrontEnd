@@ -1,0 +1,119 @@
+#root {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+}
+
+.logo {
+  height: 6em;
+  padding: 1.5em;
+  will-change: filter;
+  transition: filter 300ms;
+}
+.logo:hover {
+  filter: drop-shadow(0 0 2em #646cffaa);
+}
+.logo.react:hover {
+  filter: drop-shadow(0 0 2em #61dafbaa);
+}
+
+.card {
+  padding: 2em;
+}
+
+p{
+	color: #ffff;
+	font-size: 20px;
+	font-family: sans-serif;
+}
+
+#page-title {
+	font-size: 40px;
+	font-family: sans-serif;
+	font-style: normal;
+    position: absolute; 
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    margin: 0;
+    text-align: center;
+    width: 100%;
+    color: white;
+    padding: 10px 0;
+}
+
+.AuthClass{
+	color: red;
+	position: absolute;
+	bottom : 0px;
+	right : 10px;
+	font-style: bold;
+	font-weight :100;
+}
+
+#buttonLO{
+	position:relative; 
+	transition: 0.5s ease all
+	
+}
+
+button{
+	
+}
+	
+#buttonLO:hover{
+	border: 1px solid transparent;
+	background:red;
+	transform: scale(1.1);
+}
+
+
+
+#LoggedInTable{
+	position: absolute;
+	top: 0em;
+	right: 0em;
+	border : 1px solid;
+	border-collapse: collapse;
+	overflow : hidden;
+	box-shadow: 0 0 20px rgba(0,0,0,0.1);
+}
+
+
+
+.AccountsTable{
+	position: absolute;
+	top: 50%;
+	right: 0em;
+	border : 1px solid white;
+	border-collapse: collapse;
+	overflow : hidden;
+	box-shadow: 0 0 20px rgba(0,0,0,0.1);
+}
+
+th{
+	text-align: left;
+	color: white;
+	border: 1px solid white;
+}
+
+thead{
+	border: 1px solid white;
+}
+
+td{
+	padding: 3px;
+	border: 1px solid;	
+}
+
+tr:hover{
+	border: 1px solid white;
+	color: red;
+}
+
+
+#selectable:hover{
+	border: 2px solid red;
+}
+
