@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import './home.css';
 import Cookies from 'js-cookie';
 import { useNavigate, useParams } from 'react-router-dom';
-import { getData } from './utils/authUtil';
+import { getData, deposit, withdraw } from './utils/authUtil';
 
 const HomePage: React.FC = () => {
   const { username } = useParams<{ username: string }>();
@@ -11,6 +11,8 @@ const HomePage: React.FC = () => {
   const [isManaging, setIsManaging] = useState(false);
   const [authority, setAuthority] = useState(() => window.sessionStorage.getItem("Auth") || "");
   const [userData, setUserData] = useState<any[]>([]);  // Array for accounts
+  const [selectedAccount, setAccount] = useState(null);
+  const [depositWithdrawAmount, setDepositWithdrawAmount] = useState(0);
   const navigate = useNavigate();
   const isAdmin = authority === "ADMIN";
   const correctUser = window.sessionStorage.getItem("Username") === username;
@@ -72,6 +74,8 @@ const HomePage: React.FC = () => {
     }
   };
 
+
+  
   return (
     <div>
       {isManaging ? (
@@ -120,19 +124,44 @@ const HomePage: React.FC = () => {
                         <th>Account Created On</th>
                       </tr>
                     </thead>
-                    <tbody>
-                      {userData.map((account, index) => (
-                        <tr id="selectable" key={index}>
-						  <td>{account.id}</td>
-                          <td>{account.RegisteredKeeper}</td>
-                          <td>£{account.Balance}</td> {/* Fixed the key to 'Balance' */}
-                          <td>{account.AccountCreatedOn ? account.AccountCreatedOn.substring(0, 10) : 'N/A'}</td> {/* Fixed the key to 'AccountCreatedOn' */}
-                        </tr>
-                      ))}
-                    </tbody>
+					<tbody>
+					  {userData.map((account, index) => (
+					    <tr
+					      key={index}
+					      onClick={() => setAccount(account.id)}
+					      style={{
+					        cursor: 'pointer',
+					        backgroundColor: selectedAccount === account.id ? 'darkgrey' : 'transparent', // Optional, to highlight the selected row
+					      }}
+					    >
+					      <td>
+					        {selectedAccount === account.id ? (
+					          `>> ${account.id}`
+					        ) : (
+					          account.id
+					        )}
+					      </td>
+					      <td>{account.RegisteredKeeper}</td>
+					      <td>£{account.Balance}</td>
+					      <td>{account.AccountCreatedOn ? account.AccountCreatedOn.substring(0, 10) : 'N/A'}</td>
+					    </tr>
+					  ))}
+					</tbody>
                   </table>
-                  <button>Withdraw</button>
-                  <button>Deposit</button>
+				  <form id="inputform">
+				  <label>Amount:</label>
+				  <input
+					type="number"
+					name="amount"
+					value={depositWithdrawAmount}
+					onChange={(e) => setDepositWithdrawAmount(e.target.value)}
+		            required
+					/>
+				  </form>
+				  <div id="WithdrawDepositButtons">
+					  <button onClick= {() => withdraw(window.sessionStorage.getItem("UserID"),selectedAccount,depositWithdrawAmount)}>Withdraw</button>
+					  <button onClick= {() => deposit(window.sessionStorage.getItem("UserID"),selectedAccount,depositWithdrawAmount)}>Deposit</button>
+				  </div>
                 </div>
               ) : (
                 <p>Loading accounts...</p>

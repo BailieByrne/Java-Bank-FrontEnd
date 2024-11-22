@@ -18,6 +18,42 @@ export const autoLogin = async (id: string) => {
   };
   
 
+export const deposit = async (ownerid: string, accountid : string, amount : string) => {
+    const getRequestResponse = await fetch(`https://localhost:8080/api/accs/deposit/${ownerid}/${accountid}/${amount}`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${Cookies.get('jwt')}`,
+      },
+    });
+    if (getRequestResponse.ok) {
+	  window.location.reload();
+	  return true;
+	  }else {
+	      console.error("Failed To Deposit");
+	      useNavigate('/');
+		  return false;
+	      }
+	    };
+		
+		
+export const withdraw = async (ownerid: string, accountid : string, amount : string) => {
+    const getRequestResponse = await fetch(`https://localhost:8080/api/accs/withdraw/${ownerid}/${accountid}/${amount}`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${Cookies.get('jwt')}`,
+      },
+    });
+    if (getRequestResponse.ok) {
+	  window.location.reload();
+	  return true;
+	  }else {
+	      console.error("Failed To Deposit");
+	      useNavigate('/');
+		  return false;
+	      }
+	    };
+				
+		
 export const getData = async (id: string) => {
     const getRequestResponse = await fetch(`https://localhost:8080/api/accs/${id}`, {
       method: 'GET',
