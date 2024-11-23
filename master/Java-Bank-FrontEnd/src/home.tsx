@@ -7,6 +7,7 @@ import { loadStripe } from '@stripe/stripe-js';
 import { Elements, CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
 
 const stripePromise = loadStripe('pk_test_51QNyxiAZghTodUYpCk8mOT9oLxJuTjcDf8jg35XNoVY2oqmW3bFrqmadDIdP0tBvoYC1Qdg6tP6qPuVFiEKmtl0000BmkG1JLH');
+const apiHome = "https://localhost:8080"
 
 const HomePage: React.FC = () => {
   const { username } = useParams<{ username: string }>();
@@ -55,7 +56,7 @@ const HomePage: React.FC = () => {
 	}
 	
     try {
-      const response = await fetch('https://localhost:8080/api/payment/deposit/' + window.sessionStorage.getItem("UserID"), {
+      const response = await fetch(apiHome + '/api/payment/deposit/' + window.sessionStorage.getItem("UserID"), {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',
@@ -92,7 +93,7 @@ const HomePage: React.FC = () => {
         payment_method: {
           card: cardElement,
           billing_details: {
-            name: username, // Assuming username is the billing name
+            name: username,
           },
         },
       });
@@ -111,7 +112,7 @@ const HomePage: React.FC = () => {
   
   const logout = async () => {
       try {
-        await fetch('https://localhost:8080/auth/logout', {
+        await fetch(apiHpme + '/auth/logout', {
           method: 'POST',
           headers: { 'Authorization': `Bearer ${Cookies.get('jwt')}` }
         });

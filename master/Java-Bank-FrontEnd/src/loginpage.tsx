@@ -126,7 +126,7 @@ const LoginPage: React.FC<LoginPageProps> = () => {
   return (
     <div>
       <img src={backgroundimg} className="BackgroundImage" alt="Background"/>
-      <h1 id="loginpage-title">Byrne Banking Solutions</h1>
+      <h1 id="loginpage-title" className="textClass">Byrne Banking Solutions</h1>
       <form onSubmit={isRegistering ? handleRegister : handleLogin}>
         <div>
           <label htmlFor="username">Username:</label>

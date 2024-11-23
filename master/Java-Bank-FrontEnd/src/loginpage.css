@@ -34,18 +34,6 @@ html, body {
   background-repeat: no-repeat;
 }
 
-#loginpage-title {
-  font-size: 40px;
-  font-family: space;
-  margin: 0;
-  padding: 1rem 0;
-  position: absolute;
-  top: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  text-align: center;
-  color: rgb(103, 134, 139);
-}
 
 #foot-note {
   position: absolute;
@@ -118,4 +106,47 @@ button:hover {
   font-style: normal;
   font-weight: normal;
   src: url("./fonts/space.ttf") format("truetype");
+}
+
+/* Keyframes for pulsing effect */
+@keyframes color_pulse {
+  0%, 100% {
+    color: rgb(103, 134, 139);
+    text-shadow: 0 0 5px rgba(103, 134, 139, 0.5);
+    transform: scale(1);
+  }
+  50% {
+    color: white;
+    text-shadow: 0 0 15px rgba(255, 255, 255, 0.8);
+    transform: scale(1.1);
+  }
+}
+
+/* For the image background */
+.BackgroundImage {
+  position: absolute;  /* Make the background image cover the whole screen */
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* Ensure it covers the entire viewport */
+  z-index: -1;  /* Ensure it's behind the content */
+}
+
+/* Styling for the text */
+.textClass {
+  font-size: 40px;
+  font-family: space;
+  margin: 0;
+  padding: 1rem 0;
+  position: fixed;  /* Fixed positioning to stay at the top of the viewport */
+  top: 0;  /* At the top of the viewport */
+  left: 50%;  /* Move it horizontally to the center */
+  transform: translateX(-50%);  /* Center horizontally */
+  text-align: center;
+  color: rgb(103, 134, 139);
+  animation: color_pulse 1.5s infinite;
+  font-weight: bold;
+  display: inline-block;  /* Prevent layout issues */
+  z-index: 1;  /* Make sure text is above the background */
 }
