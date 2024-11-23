@@ -95,6 +95,29 @@ tr:hover {
   color: red;
 }
 
+.StripeElement{
+	width: 100%;
+	background: white;
+}
+
+
+#currency-input {
+  display: flex; /* Enables horizontal alignment for its children */
+  align-items: center; /* Aligns the £ symbol and input vertically */
+  justify-content: flex-start; /* Aligns contents to the left */ /* Adds spacing between the £ and the input field */
+  align-self: stretch;
+  line-height: 1;
+  gap: 4px;
+  font-size: 2em/* Ensures #currency-input isn't centered by the form */
+}
+
+
+.errorNote{
+	color:red;
+	margin: 2em;
+	font-style: italic;
+}
+
 #WithdrawDepositButtons {
   margin: 4rem auto;
   padding: 0.5rem;

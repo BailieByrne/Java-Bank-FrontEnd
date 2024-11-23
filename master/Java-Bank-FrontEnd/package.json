@@ -6,6 +6,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@stripe/react-stripe-js": "^3.0.0",
+    "@stripe/stripe-js": "^5.2.0",
     "js-cookie": "^3.0.5",
     "jwt-decode": "^4.0.0",
     "react": "^18.3.1",

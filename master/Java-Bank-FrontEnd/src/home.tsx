@@ -2,28 +2,33 @@ import React, { useState, useEffect } from 'react';
 import './home.css';
 import Cookies from 'js-cookie';
 import { useNavigate, useParams } from 'react-router-dom';
-import { getData, deposit, withdraw } from './utils/authUtil';
+import { getData, deposit} from './utils/authUtil';
+import { loadStripe } from '@stripe/stripe-js';
+import { Elements, CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
+
+const stripePromise = loadStripe('pk_test_51QNyxiAZghTodUYpCk8mOT9oLxJuTjcDf8jg35XNoVY2oqmW3bFrqmadDIdP0tBvoYC1Qdg6tP6qPuVFiEKmtl0000BmkG1JLH');
 
 const HomePage: React.FC = () => {
   const { username } = useParams<{ username: string }>();
   const [userList, setUserList] = useState<string[]>([]);
-  const [managedUser, setManagedUser] = useState(null);
   const [isManaging, setIsManaging] = useState(false);
-  const [authority, setAuthority] = useState(() => window.sessionStorage.getItem("Auth") || "");
-  const [userData, setUserData] = useState<any[]>([]);  // Array for accounts
-  const [selectedAccount, setAccount] = useState(null);
-  const [depositWithdrawAmount, setDepositWithdrawAmount] = useState(0);
+  const [userData, setUserData] = useState<any[]>([]); // Array for accounts
+  const [selectedAccount, setSelectedAccount] = useState<string | null>(null);
+  const [depositWithdrawAmount, setDepositWithdrawAmount] = useState<number>(0);
+  const [paymentIntentClientSecret, setPaymentIntentClientSecret] = useState<string>('');
+  const [errorNote, setError] = useState<string>("");
   const navigate = useNavigate();
-  const isAdmin = authority === "ADMIN";
-  const correctUser = window.sessionStorage.getItem("Username") === username;
 
+  const stripe = useStripe();
+  const elements = useElements();
+
+  // Fetch user data
   useEffect(() => {
     const fetchUserData = async () => {
       const userId = window.sessionStorage.getItem("UserID");
-      if (userId && correctUser) {
+      if (userId) {
         try {
           const data = await getData(userId);
-          console.log('Fetched User Data:', data); // Log the structure of the response
           setUserData(data); // Directly set the array of accounts
         } catch (error) {
           console.error("Failed to fetch user data", error);
@@ -38,141 +43,151 @@ const HomePage: React.FC = () => {
     fetchUserData();
   }, [navigate]);
 
-  const ManageUser = async (user: string) => {
-    navigate('/manage/' + user);
+  const createPaymentIntent = async (amount: number) => {
+	if (amount <= 0.3){
+		setError("Value Must Be Greater Than £0.30");
+		return null;
+	}
+	
+	if (selectedAccount == null){
+		setError("Select An Account To Deposit")
+		return null;
+	}
+	
+    try {
+      const response = await fetch('https://localhost:8080/api/payment/deposit/' + window.sessionStorage.getItem("UserID"), {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${Cookies.get('jwt')}`,
+        },
+        body: JSON.stringify({ amount: amount * 100 }), // Amount in cents
+      });
+	  if (response.ok){
+		const data = await response.json();
+		setPaymentIntentClientSecret(data.clientSecret); // Store the client secret
+	  }else{
+		console.error("PAYMENT FAILED");
+	  }
+    } catch (error) {
+      console.error("Error creating payment intent", error);
+    }
   };
 
-  const AdminGetUsers = async () => {
+  const handleSubmit = async (event: React.FormEvent) => {
+    event.preventDefault();
+
+    if (!stripe || !elements) {
+      return; // Ensure Stripe is initialized and Elements is available
+    }
+
+    const cardElement = elements.getElement(CardElement);
+    if (!cardElement) {
+      console.error('Card Element not found');
+      return;
+    }
+
     try {
-      const response = await fetch('https://localhost:8080/api/dev/getusers', {
-        method: 'GET',
-        headers: { 'Authorization': `Bearer ${Cookies.get('jwt')}` }
+      const { error, paymentIntent } = await stripe.confirmCardPayment(paymentIntentClientSecret, {
+        payment_method: {
+          card: cardElement,
+          billing_details: {
+            name: username, // Assuming username is the billing name
+          },
+        },
       });
-      if (response.ok) {
-        const fetchedUserList = await response.json();
-        console.log(fetchedUserList);
-        setUserList(fetchedUserList);
-      } else {
-        throw new Error('Network response was not ok');
+
+      if (error) {
+        console.error('Payment failed:', error.message);
+		setError(error.message);
+      } else if (paymentIntent?.status === 'succeeded') {
+        deposit(window.sessionStorage.getItem("UserID"), selectedAccount, paymentIntent.id);
       }
     } catch (error) {
-      console.error('Failed To Fetch', error);
+      console.error("Payment submission error", error);
     }
   };
 
+  
   const logout = async () => {
-    try {
-      await fetch('https://localhost:8080/auth/logout', {
-        method: 'POST',
-        headers: { 'Authorization': `Bearer ${Cookies.get('jwt')}` }
-      });
-      Cookies.remove('jwt');
-      sessionStorage.clear();
-      window.location.reload();
-    } catch (error) {
-      console.error('Logout failed', error);
-    }
-  };
-
-
+      try {
+        await fetch('https://localhost:8080/auth/logout', {
+          method: 'POST',
+          headers: { 'Authorization': `Bearer ${Cookies.get('jwt')}` }
+        });
+        Cookies.remove('jwt');
+        sessionStorage.clear();
+        window.location.reload();
+      } catch (error) {
+        console.error('Logout failed', error);
+      }
+    };
+  
   
   return (
     <div>
-      {isManaging ? (
-        <Manage user={managedUser} />
-      ) : (
+      <h1 id="page-title">You Are Logged In {username}</h1>
+      {userData.length > 0 ? (
         <div>
-          {isAdmin ? (
-            <>
-              <h1 id="page-title">You Are Logged In As {username}</h1>
-              <p className="AuthClass">{authority}</p>
-              <button onClick={AdminGetUsers}>View Logged-In Users</button>
-              <button id="buttonLO" onClick={logout} className="LogoutButton">Logout</button>
-              {userList.length > 0 ? (
-                <table id="LoggedInTable">
-                  <thead>
-                    <tr>
-                      <th>LoggedInUsers</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {userList.map((user, index) => (
-                      user !== 'Dev' && (
-                        <tr id="selectable" key={index}>
-                          <td onClick={() => ManageUser(user)}>{user}</td>
-                        </tr>
-                      )
-                    ))}
-                  </tbody>
-                </table>
-              ) : (
-                <p>No users found.</p>
-              )}
-            </>
-          ) : (
-            <>
-              <h1 id="page-title">You Are Logged In {username}</h1>
-              {userData && userData.length > 0 ? ( // Render if userData has accounts
-                <div>
-                  <p>Your Accounts:</p>
-                  <table>
-                    <thead>
-                      <tr>
-					  	<th>Account ID</th>
-                        <th>Registered Keeper</th>
-                        <th>Balance</th>
-                        <th>Account Created On</th>
-                      </tr>
-                    </thead>
-					<tbody>
-					  {userData.map((account, index) => (
-					    <tr
-					      key={index}
-					      onClick={() => setAccount(account.id)}
-					      style={{
-					        cursor: 'pointer',
-					        backgroundColor: selectedAccount === account.id ? 'darkgrey' : 'transparent', // Optional, to highlight the selected row
-					      }}
-					    >
-					      <td>
-					        {selectedAccount === account.id ? (
-					          `>> ${account.id}`
-					        ) : (
-					          account.id
-					        )}
-					      </td>
-					      <td>{account.RegisteredKeeper}</td>
-					      <td>£{account.Balance}</td>
-					      <td>{account.AccountCreatedOn ? account.AccountCreatedOn.substring(0, 10) : 'N/A'}</td>
-					    </tr>
-					  ))}
-					</tbody>
-                  </table>
-				  <form id="inputform">
-				  <label>Amount:</label>
-				  <input
-					type="number"
-					name="amount"
-					value={depositWithdrawAmount}
-					onChange={(e) => setDepositWithdrawAmount(e.target.value)}
-		            required
-					/>
-				  </form>
-				  <div id="WithdrawDepositButtons">
-					  <button onClick= {() => withdraw(window.sessionStorage.getItem("UserID"),selectedAccount,depositWithdrawAmount)}>Withdraw</button>
-					  <button onClick= {() => deposit(window.sessionStorage.getItem("UserID"),selectedAccount,depositWithdrawAmount)}>Deposit</button>
-				  </div>
-                </div>
-              ) : (
-                <p>Loading accounts...</p>
-              )}
-              <button id="buttonLO" onClick={logout} className="LogoutButton">Logout</button>
-            </>
-          )}
+          <p>Your Accounts:</p>
+          <table>
+            <thead>
+              <tr>
+                <th>Account ID</th>
+                <th>Registered Keeper</th>
+                <th>Balance</th>
+                <th>Account Created On</th>
+              </tr>
+            </thead>
+            <tbody>
+              {userData.map((account, index) => (
+                <tr
+                  key={index}
+                  onClick={() => setSelectedAccount(account.id)}
+                  style={{
+                    cursor: 'pointer',
+                    backgroundColor: selectedAccount === account.id ? 'darkgrey' : 'transparent',
+                  }}
+                >
+                  <td>{account.id}</td>
+                  <td>{account.RegisteredKeeper}</td>
+                  <td>£{account.Balance}</td>
+                  <td>{account.AccountCreatedOn?.substring(0, 10) || 'N/A'}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+
+          {/* Payment Form */}
+          <form id="inputform" onSubmit={handleSubmit}>
+            <label>Deposit Amount:</label>
+			<div id="currency-input">
+			<span>£</span>
+            <input
+              type="number"
+              name="amount"
+			  id ="amountInput"
+              value= {depositWithdrawAmount}
+              onChange={(e) => setDepositWithdrawAmount(Number(e.target.value))}
+              required
+            />
+			</div>
+            {/* Card Element (the Stripe Card Input) */}
+            <CardElement/>
+            <button type="submit" onClick={() => createPaymentIntent(depositWithdrawAmount)}>
+              Pay with Stripe
+            </button>
+          </form>
+		  
+		  <p className="errorNote">{errorNote}</p>
         </div>
+      ) : (
+        <p>Loading accounts...</p>
       )}
+	  <button onClick={logout}>Logout</button>
     </div>
   );
 };
+
 
 export default HomePage;
