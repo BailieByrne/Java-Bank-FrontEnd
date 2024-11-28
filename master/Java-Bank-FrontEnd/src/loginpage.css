@@ -59,7 +59,7 @@ form {
   justify-content: center;
   background-color: grey;
   padding: 1.5rem;
-  border-radius: 10px;
+  border-radius: 5px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   gap: 1rem;
   width: 300px;
@@ -85,7 +85,8 @@ input:hover {
 
 button, .Registerbutton {
   width: 100%;
-  padding: 10px;
+  padding: 4px;
+  margin-bottom: 10px;
   border: 1px solid white;
   color: white;
   cursor: pointer;
@@ -94,11 +95,10 @@ button, .Registerbutton {
 }
 
 button:hover {
-  background-color: green;
+  border: white;
 }
 
 .Registerbutton:hover {
-  background-color: blue;
 }
 
 @font-face {
@@ -133,20 +133,53 @@ button:hover {
   z-index: -1;  /* Ensure it's behind the content */
 }
 
+.title-container{
+	  display: flex;
+	  flex-direction: column;
+	  align-items: center;
+	  justify-content: center;
+}
+
+
 /* Styling for the text */
 .textClass {
   font-size: 40px;
   font-family: space;
   margin: 0;
   padding: 1rem 0;
-  position: fixed;  /* Fixed positioning to stay at the top of the viewport */
-  top: 0;  /* At the top of the viewport */
-  left: 50%;  /* Move it horizontally to the center */
-  transform: translateX(-50%);  /* Center horizontally */
+  position: fixed;
+  top: 0;  
   text-align: center;
   color: rgb(103, 134, 139);
   animation: color_pulse 1.5s infinite;
   font-weight: bold;
-  display: inline-block;  /* Prevent layout issues */
-  z-index: 1;  /* Make sure text is above the background */
+  display: inline-block; 
+  z-index: 1;  
+}
+
+
+@keyframes pulseShadow {
+  0% {
+    box-shadow: 0 0 10px rgb(103, 134, 139), 0 0 20px rgb(103, 134, 139);
+  }
+  50% {
+    box-shadow: 0 0 15px black, 0 0 30px black;
+  }
+  100% {
+    box-shadow: 0 0 10px rgb(103, 134, 139), 0 0 20px rgb(103, 134, 139);
+  }
+}
+
+.loginform {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  outline: none;
+  transition: box-shadow 0.3s ease-in-out;
+  animation: pulseShadow 1.5s infinite;
+}
+
+/* Optional: Focus state to trigger the pulse effect when the element is focused */
+.form-element:focus {
+  box-shadow: 0 0 15px rgb(103, 134, 139), 0 0 30px rgb(103, 134, 139);
 }

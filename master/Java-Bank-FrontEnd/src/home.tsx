@@ -17,6 +17,7 @@ const HomePage: React.FC = () => {
   const [selectedAccount, setSelectedAccount] = useState<string | null>(null);
   const [depositWithdrawAmount, setDepositWithdrawAmount] = useState<number>(0);
   const [paymentIntentClientSecret, setPaymentIntentClientSecret] = useState<string>('');
+  const [confirmPayment, setConfirmPayment] = useState<boolean>(false);
   const [errorNote, setError] = useState<string>("");
   const navigate = useNavigate();
 
@@ -112,7 +113,7 @@ const HomePage: React.FC = () => {
   
   const logout = async () => {
       try {
-        await fetch(apiHpme + '/auth/logout', {
+        await fetch(apiHome + '/auth/logout', {
           method: 'POST',
           headers: { 'Authorization': `Bearer ${Cookies.get('jwt')}` }
         });
@@ -152,7 +153,7 @@ const HomePage: React.FC = () => {
                 >
                   <td>{account.id}</td>
                   <td>{account.RegisteredKeeper}</td>
-                  <td>£{account.Balance}</td>
+                  <td>£{(parseFloat(account.Balance) || 0).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',')}</td>
                   <td>{account.AccountCreatedOn?.substring(0, 10) || 'N/A'}</td>
                 </tr>
               ))}
@@ -175,11 +176,29 @@ const HomePage: React.FC = () => {
 			</div>
             {/* Card Element (the Stripe Card Input) */}
             <CardElement/>
-            <button type="submit" onClick={() => createPaymentIntent(depositWithdrawAmount)}>
-              Pay with Stripe
-            </button>
+			{confirmPayment ? (
+			  <>
+			    <p>Your Card Will Be Debited £{depositWithdrawAmount}</p>
+			    <button
+			      id="ConfirmPaymentButton"
+			      type="submit"
+			      onClick={() => createPaymentIntent(depositWithdrawAmount)}
+			    >
+			      Confirm Payment
+			    </button>
+			  </>
+			) : (
+			  <button
+			    type="submit"
+			    onClick={() => {
+			      createPaymentIntent(depositWithdrawAmount);
+			      setConfirmPayment(true);
+			    }}
+			  >
+			    Pay With Stripe
+			  </button>
+			)}
           </form>
-		  
 		  <p className="errorNote">{errorNote}</p>
         </div>
       ) : (
