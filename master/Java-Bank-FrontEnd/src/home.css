@@ -64,6 +64,10 @@ form {
   width: 300px;
 }
 
+select{
+	width : 300px;
+}
+
 #inputform {
   margin: 1rem auto;
 }

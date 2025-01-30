@@ -59,7 +59,7 @@ export const withdraw = async (ownerid: string, accountid : string, amount : str
 	  window.location.reload();
 	  return true;
 	  }else {
-	      console.error("Failed To Deposit");
+	      console.error("Failed To Withdraw");
 	      useNavigate('/');
 		  return false;
 	      }
@@ -82,3 +82,26 @@ export const getData = async (id: string) => {
 	      }
 	    };
 
+
+export const getUserList = async () => {
+  try {
+    const getResponse = await fetch('https://localhost:8080/api/dev/getusers', {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${Cookies.get('jwt')}`,
+      },
+    });
+
+    if (getResponse.ok) {
+      console.log("Accounts Fetched");
+      const data = await getResponse.json();
+      return data;
+    } else {
+      console.error("Failed To Reach Server");
+      return [];
+    }
+  } catch (error) {
+    console.error("Error fetching user list:", error);
+    return [];
+  }
+		};
